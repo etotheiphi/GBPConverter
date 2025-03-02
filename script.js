@@ -9,14 +9,19 @@ const result = document.getElementById('result');
 
 // Fetch currency data and populate dropdowns
 fetch(API_URL)
-    .then(response => response.json())
-    .then(data => {
-        const currencies = Object.keys(data.conversion_rates);
-        currencies.forEach(currency => {
-            fromCurrency.innerHTML += `<option value="${currency}">${currency}</option>`;
-            toCurrency.innerHTML += `<option value="${currency}">${currency}</option>`;
-        });
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // For debugging
+            const currencies = Object.keys(data.conversion_rates);
+            currencies.forEach(currency => {
+                const option = document.createElement('option');
+                option.value = currency;
+                option.textContent = currency;
+                fromCurrency.appendChild(option);
+                toCurrency.appendChild(option.cloneNode(true));
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
 
 // Conversion logic
 convertButton.addEventListener('click', () => {
