@@ -1,4 +1,4 @@
-const API_KEY = 8122aae49bfd87bb911ac452;
+const API_KEY = '8122aae49bfd87bb911ac452';
 const API_URL = `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`;
 
 const amount = document.getElementById('amount');
