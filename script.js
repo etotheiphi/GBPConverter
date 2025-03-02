@@ -3,7 +3,7 @@ const baseUrl = 'http://data.fixer.io/api/latest';
 
 async function fetchExchangeRates() {
     try {
-        const response = await fetch(`${baseUrl}?access_key=${apiKey}&base=GBP`);
+        const response = await fetch(`${baseUrl}?access_key=${apiKey}&base=EUR`);
         const data = await response.json();
         
         if (data.success) {
