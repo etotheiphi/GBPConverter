@@ -1,32 +1,34 @@
-const apiKey = '4110c42ad6b1de029572a2ceb7939cab'; 
-const baseUrl = 'http://data.fixer.io/api/latest';
+const API_KEY = 8122aae49bfd87bb911ac452;
+const API_URL = `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`;
 
-async function fetchExchangeRates() {
-    try {
-        const response = await fetch(`${baseUrl}?access_key=${apiKey}&base=EUR`);
-        const data = await response.json();
-        
-        if (data.success) {
-            displayRates(data.rates);
-        } else {
-            throw new Error('Failed to fetch exchange rates');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('rates-container').innerHTML = 'Failed to load exchange rates';
-    }
-}
+const amount = document.getElementById('amount');
+const fromCurrency = document.getElementById('fromCurrency');
+const toCurrency = document.getElementById('toCurrency');
+const convertButton = document.getElementById('convertButton');
+const result = document.getElementById('result');
 
-function displayRates(rates) {
-    const container = document.getElementById('rates-container');
-    container.innerHTML = '';
+// Fetch currency data and populate dropdowns
+fetch(API_URL)
+    .then(response => response.json())
+    .then(data => {
+        const currencies = Object.keys(data.conversion_rates);
+        currencies.forEach(currency => {
+            fromCurrency.innerHTML += `<option value="${currency}">${currency}</option>`;
+            toCurrency.innerHTML += `<option value="${currency}">${currency}</option>`;
+        });
+    });
 
-    for (const [currency, rate] of Object.entries(rates)) {
-        const rateElement = document.createElement('div');
-        rateElement.className = 'rate';
-        rateElement.textContent = `${currency}: ${rate.toFixed(4)}`;
-        container.appendChild(rateElement);
-    }
-}
+// Conversion logic
+convertButton.addEventListener('click', () => {
+    const fromCurrencyValue = fromCurrency.value;
+    const toCurrencyValue = toCurrency.value;
+    const amountValue = amount.value;
 
-fetchExchangeRates();
+    fetch(`${API_URL}`)
+        .then(response => response.json())
+        .then(data => {
+            const rate = data.conversion_rates[toCurrencyValue] / data.conversion_rates[fromCurrencyValue];
+            const convertedAmount = (amountValue * rate).toFixed(2);
+            result.innerHTML = `${amountValue} ${fromCurrencyValue} = ${convertedAmount} ${toCurrencyValue}`;
+        });
+});
