@@ -1,23 +1,34 @@
-body {
-    font-family: Arial, sans-serif;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
+const API_KEY = 8122aae49bfd87bb911ac452;
+const API_URL = `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`;
 
-h1 {
-    text-align: center;
-}
+const amount = document.getElementById('amount');
+const fromCurrency = document.getElementById('fromCurrency');
+const toCurrency = document.getElementById('toCurrency');
+const convertButton = document.getElementById('convertButton');
+const result = document.getElementById('result');
 
-#rates-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
-}
+// Fetch currency data and populate dropdowns
+fetch(API_URL)
+    .then(response => response.json())
+    .then(data => {
+        const currencies = Object.keys(data.conversion_rates);
+        currencies.forEach(currency => {
+            fromCurrency.innerHTML += `<option value="${currency}">${currency}</option>`;
+            toCurrency.innerHTML += `<option value="${currency}">${currency}</option>`;
+        });
+    });
 
-.rate {
-    background-color: #f0f0f0;
-    padding: 10px;
-    border-radius: 5px;
-    text-align: center;
-}
+// Conversion logic
+convertButton.addEventListener('click', () => {
+    const fromCurrencyValue = fromCurrency.value;
+    const toCurrencyValue = toCurrency.value;
+    const amountValue = amount.value;
+
+    fetch(`${API_URL}`)
+        .then(response => response.json())
+        .then(data => {
+            const rate = data.conversion_rates[toCurrencyValue] / data.conversion_rates[fromCurrencyValue];
+            const convertedAmount = (amountValue * rate).toFixed(2);
+            result.innerHTML = `${amountValue} ${fromCurrencyValue} = ${convertedAmount} ${toCurrencyValue}`;
+        });
+});
